@@ -181,5 +181,13 @@ def get_username_cookie(request):
 app.add_url_rule('/static/script.js', 'script', build_only=True)
 
 
+@app.route('/hidden/shutdown/')
+def shutdown_flask():
+    func = request.environ.get('werkzeug.server.shutdown')
+    if func != None:
+        func()
+    return jsonify({})
+
+
 if __name__ == '__main__':
-    app.run(debug=True, port=3155)
+    app.run(host='0.0.0.0', port=3155, debug=True, threaded=True)
