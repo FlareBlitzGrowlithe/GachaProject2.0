@@ -1,0 +1,37 @@
+<nav class="navbar navbar-expand-lg navbar-light" id="mainNav">
+    <div class="container px-4 px-lg-5">
+        <a class="navbar-brand" href="/draw">KP的宝库</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarResponsive"
+            aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+            <i class="fas fa-bars"></i>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarResponsive">
+            <ul class="navbar-nav ms-auto py-4 py-lg-0">
+                {% if user %}
+                <li class="nav-item"><a class="nav-link px-lg-3 py-3 py-lg-4" style="color: #999;">
+                        <i class='fas'>&#xf406;</i>
+                        :<span id="user-name">{{ user['username'] }}</span>&nbsp;&nbsp;
+                        <i class='fas'>&#xf51e;</i>
+                        :<span id="user-gold">{{ user['gold'] }}</span>g&nbsp;&nbsp;
+                        幸运: <span id="user-luck">{{ user['luck'] }}</span>
+                    </a></li>
+                {% endif %}
+                <li class="nav-item"><a class="nav-link px-lg-3 py-3 py-lg-4" href="/draw">
+                        <i class="fa-solid fa-hand-sparkles"></i>
+                        前往抽卡</a>
+                </li>
+                <li class="nav-item"><a class="nav-link px-lg-3 py-3 py-lg-4" href="/user">
+                        <i class="fa-solid fa-sack-xmark"></i>
+                        我的库存</a></li>
+                <li class="nav-item"><a class="nav-link px-lg-3 py-3 py-lg-4" href="/store">
+                        <i class="fa-brands fa-shopify"></i>
+                        限时商店</a></li>
+                {% if user['admin'] %}
+                <li class="nav-item"><a class="nav-link px-lg-3 py-3 py-lg-4" href="/admin">
+                        <i class="fa-solid fa-screwdriver-wrench"></i>
+                        管理界面</a></li>
+                {% endif %}
+            </ul>
+        </div>
+    </div>
+</nav>

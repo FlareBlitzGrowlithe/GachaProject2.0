@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>User Inventory</title>
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script src="{{url_for('static',filename='/jquery.dataTables.min.js')}}"></script>
+    <script src="{{url_for('static',filename='/script.js')}}"></script>
+    <script src="https://cdn.datatables.net/1.13.3/js/dataTables.bootstrap5.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.13.1/xlsx.full.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://kit.fontawesome.com/b53ea7af70.js" crossorigin="anonymous"></script>
+    <!-- Bootstrap core CSS -->
+    <link href="{{url_for('static',filename='/dataTables.bootstrap5.min.css')}}" rel="stylesheet">
+    <link href="{{url_for('static',filename='/style.css')}}" rel="stylesheet">
+    <style>
+        table {
+            table-layout: fixed;
+            word-wrap: break-word;
+            font-size: 1rem;
+        }
+    </style>
+</head>
+
+<body>
+    {% include 'nav.html' %}
+    <header class="masthead" style="background-image: url('')">
+        <div class="container position-relative px-4 px-lg-5">
+            <div class="row gx-4 gx-lg-5 justify-content-center">
+                <div class="col-md-10 col-lg-8 col-xl-7">
+                    <div class="site-heading">
+                        <h2>KP的管理界面</h2>
+                        <span class="subheading">在这里修正世界线吧</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+    <!-- admin session for user control -->
+    <div class="container px-lg-5">
+        <!--button class="btn btn-primary mb-3" id="toggle-form-btn">用户管理</button-->
+        <nav>
+            <div class="nav nav-tabs" id="nav-tab-admin" role="tablist">
+                <button class="nav-link active" id="nav-home-tab" data-bs-toggle="tab" data-bs-target="#nav-tab1"
+                    type="button" role="tab" aria-controls="nav-home" aria-selected="true">添加道具</button>
+                <button class="nav-link" id="nav-profile-tab" data-bs-toggle="tab" data-bs-target="#nav-tab2"
+                    type="button" role="tab" aria-controls="nav-profile" aria-selected="false">用户库存</button>
+                <button class="nav-link" id="nav-profile-tab" data-bs-toggle="tab" data-bs-target="#nav-tab3"
+                    type="button" role="tab" aria-controls="nav-profile" aria-selected="false">数值操作</button>
+            </div>
+        </nav>
+        <div class="tab-content" id="nav-tab-content">
+            <!--tab 1-->
+            <div class="tab-pane fade show active" id="nav-tab1" role="tabpanel">
+                <form id="equipment-form" class="form mb-3" style="width:50%; padding-top: 2rem;">
+                    <div class="form-group">
+                        <label for="name-input">名称 <i style="color:red">*</i>
+                        </label>
+                        <input type="text" class="form-control" id="name-input" name="name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="category-input">种类 <i style="color:red">*</i></label>
+                        <select class="form-control" id="category-input" name="category" required>
+                            <option value="">--请选择--</option>
+                            <option value="武器">武器</option>
+                            <option value="增益">增益</option>
+                            <option value="护甲">护甲</option>
+                            <option value="技能">技能</option>
+                            <option value="道具">道具</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="ids-input">编号 <i style="color:red">*</i></label>
+                        <input type="text" class="form-control" id="ids-input" name="ids">
+                    </div>
+                    <div class="form-group">
+                        <label for="innerid-input">内ID</label>
+                        <input type="text" class="form-control" id="innerid-input" name="innerid">
+                    </div>
+                    <div class="form-group">
+                        <label for="rarity-input">级别</label>
+                        <input type="text" class="form-control" id="rarity-input" name="rarity">
+                    </div>
+                    <div class="form-group">
+                        <label for="class-input">职业</label>
+                        <input type="text" class="form-control" id="class-input" name="class">
+                    </div>
+                    <div class="form-group">
+                        <label for="cost-input">使用代价</label>
+                        <input type="text" class="form-control" id="cost-input" name="cost">
+                    </div>
+                    <div class="form-group">
+                        <label for="stats-input">属性加成</label>
+                        <input type="text" class="form-control" id="stats-input" name="stats">
+                    </div>
+                    <div class="form-group">
+                        <label for="effect-input">效果<i style="color:red">*</i>
+                        </label>
+                        <textarea class="form-control" id="effect-input" rows="3" name="effect" required></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="notes-input">备注</label>
+                        <textarea class="form-control" id="notes-input" rows="3" name="notes"></textarea>
+                    </div>
+                    <button id="submit-btn" class="btn btn-primary">添加装备</button>
+                </form>
+            </div>
+            <!--tab 2-->
+            <div class="tab-pane fade" id="nav-tab2" role="tabpanel">
+                <form id="inventory-form-all" style="padding-top: 2rem;">
+                    <table id="inventory-all" class="table table-striped table-hover" style="width:100%">
+                        <thead>
+                            <tr>
+                                <th>用户编号</th>
+                                <th>名称</th>
+                                <th>稀有度</th>
+                                <th>职业</th>
+                                <th>属性加成</th>
+                                <th>效果</th>
+                                <th>获得时间</th>
+                                <th>操作</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
+                </form>
+            </div>
+            <div class="tab-pane fade" id="nav-tab3">
+                施工中，会有玩家的数据调整和库存增减
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>
+<script>
+
+
+</script>
