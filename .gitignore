@@ -4,3 +4,4 @@ node_modules
 test.py
 utils/__pycache__/
 database/
+
