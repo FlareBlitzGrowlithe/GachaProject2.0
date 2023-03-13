@@ -83,8 +83,7 @@ def store():
     if 'user_id' not in session:
         return redirect('/login')
     user = get_user_by_id(session['user_id'])
-    inventory = get_equipment_by_userid(user["user_id"])
-    return render_template('store.html', user=user, inventory=inventory)
+    return render_template('store.html', user=user)
 
 # page admin control
 @app.route('/admin')
@@ -92,8 +91,7 @@ def admin():
     if 'user_id' not in session:
         return redirect('/login')
     user = get_user_by_id(session['user_id'])
-    inventory = get_equipment_by_userid(user["user_id"])
-    return render_template('admin.html', user=user, inventory=inventory)
+    return render_template('admin.html', user=user)
 
 @app.route('/getinventoryall')
 def get_inventory_all():
@@ -110,6 +108,14 @@ def get_inventory():
     user = get_user_by_id(session['user_id'])
     inventory = get_equipment_by_userid(user["user_id"])
     return jsonify(inventory=inventory)
+
+
+@app.route('/getequipmentall')
+def get_equipment_all():
+    if 'user_id' not in session:
+        return redirect('/login')
+    equipment = get_equipment_full_list()
+    return jsonify(equipment=equipment)
 
 @app.route('/getgold')
 def get_gold():

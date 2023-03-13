@@ -31,7 +31,7 @@ def get_equipment_by_innerid(equipment_id, rarity):
     return get_result(result)
 
 
-def get_equipment_all():
+def get_equipment_full_list():
     """
     Retrieve all equipment data from equipment database.
     """

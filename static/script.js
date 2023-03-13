@@ -21,14 +21,19 @@ function TenTimes() {
 
 // call gacha api
 function CallGacha(PoolSelection, times) {
-    $.post("/gacha", { pool: PoolSelection, times: times }, function (results) {
-        gachaResult.unshift(results.results);
-        UpdateGachaTable();
-        var TABLE_ID = document.getElementById("main-table");
-        Show(TABLE_ID);
-        UpdateGoldWebPage(results.gold);
-    }).fail(function () {
-        console.log("Failed to call /gacha");
+    $.ajax({
+        url: "/gacha",
+        type: "POST",
+        data: { pool: PoolSelection, times: times },
+        success: function (batch) {
+            gachaResult.unshift(batch.results);
+            UpdateGachaTable();
+            $('#main-table').css('visibility', 'visible');
+            UpdateGoldWebPage(batch.gold);
+        },
+        error: function () {
+            console.log("Failed to call /gacha");
+        }
     });
     // TODO: 大失败提示信息栏
 }
@@ -202,6 +207,54 @@ $(document).ready(function () {
     });
     // TODO: 删除后，撤销当前操作的悬浮窗，或者按钮
 });
+  
+$(document).ready(function () {
+    // get equipment items and populate them in the table
+    var equipmentTable = $('#items-all').DataTable({
+        ajax: {
+            url: '/getequipmentall',
+            dataSrc: 'equipment'
+        },
+        columns: [
+            { data: 'ids' },
+            { data: 'category' },
+            { data: 'name' },
+            { data: 'innerid' },
+            { data: 'rarity' },
+            { data: 'class' },
+            { data: 'cost' },
+            { data: 'stats' },
+            { data: 'effect' },
+            {
+                data: null,
+                render: function (data, type, row) {
+                    // add the equipment_id to the button's data attributes
+                    return '<button class="sell-btn" data-item-id="' + data.id + '">移除</button>';
+                }
+            }
+        ]
+    });
+
+    // handle click event for the sell button
+    $('#items-all tbody').on('click', '.sell-btn', function (event) {
+        // prevent the default action of the button, which is to submit the form
+        event.preventDefault();
+        var item_id = $(this).data('item-id');
+        $.ajax({
+            url: '/remove',
+            type: 'POST',
+            data: { 'equipment_id': item_id },
+            success: function (data) {
+                // update the equipment table
+                equipmentTable.ajax.reload(null, false);
+            },
+            error: function (xhr, status, error) {
+                console.log(error);
+            }
+        });
+    });
+});
+
 
 // admin control for adding new equipment
 function submitForm() {
@@ -227,14 +280,7 @@ $(document).ready(function () {
 });
 
 function DownloadExcel() {
-    var WarningUnit = document.getElementById("warning-result");
-
-    if (Results.length === 0) {
-        Show(WarningUnit)
-    } else {
-        Hide(WarningUnit)
-        ExportExcel(Results)
-    }
+//TODO: check database for available data
 }
 function ExportExcel(data) {
     filename = 'reports.xlsx';
@@ -242,10 +288,6 @@ function ExportExcel(data) {
     var wb = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(wb, ws, "Sheet1");
     XLSX.writeFile(wb, filename);
-}
-
-function Show(ShowID) {
-    ShowID.style.visibility = "visible";
 }
 
 //nav menu transform

@@ -8,7 +8,7 @@ import datetime
 PRICE_CHART_SELLING = {"神": 20, "圣": 10, "皇": 8, "贤": 5, "凡": 3 }
 
 
-def add_equipment(equipment):
+def add_equipment_to_userid(equipment):
     """
     Add a new equipment to the user's inventory with current timestamp.
     """
