@@ -23,10 +23,10 @@
             <div class="nav nav-tabs" id="nav-tab-admin" role="tablist">
                 <button class="nav-link active" id="nav-item-tab" data-bs-toggle="tab" data-bs-target="#nav-tab1"
                     type="button" role="tab" aria-controls="nav-home" aria-selected="true">添加道具</button>
-                <button class="nav-link" id="nav-user-tab" data-bs-toggle="tab" data-bs-target="#nav-tab2"
-                    type="button" role="tab" aria-controls="nav-user" aria-selected="false">用户库存</button>
-                <button class="nav-link" id="nav-items-tab" data-bs-toggle="tab" data-bs-target="#nav-tab3" type="button" role="tab"
-                    aria-controls="nav-items" aria-selected="false">物品列表</button>
+                <button class="nav-link" id="nav-user-tab" data-bs-toggle="tab" data-bs-target="#nav-tab2" type="button"
+                    role="tab" aria-controls="nav-user" aria-selected="false">用户库存</button>
+                <button class="nav-link" id="nav-items-tab" data-bs-toggle="tab" data-bs-target="#nav-tab3"
+                    type="button" role="tab" aria-controls="nav-items" aria-selected="false">物品列表</button>
                 <button class="nav-link" id="nav-stats-tab" data-bs-toggle="tab" data-bs-target="#nav-tab4"
                     type="button" role="tab" aria-controls="nav-stats" aria-selected="false">数值操作</button>
 
@@ -109,6 +109,7 @@
                     </table>
                 </form>
             </div>
+            <!--tab 3-->
             <div class="tab-pane fade" id="nav-tab3">
                 <form id="items-form-all" style="padding-top: 2rem;">
                     <table id="items-all" class="table table-striped table-hover" style="width:100%">
@@ -131,9 +132,51 @@
                     </table>
                 </form>
             </div>
-            <div class="tab-pane fade" id="nav-tab4">
-                施工中，会有玩家的数据调整和库存增减
-
+            <!-- tab 4 -->
+            <div class="tab-pane fade" id="nav-tab4" role="tabpanel">
+                <div class="container">
+                    <div class="row mt-5">
+                        <h5>对玩家进行调整</h5>
+                        <div class="col-md-4">
+                            <select class="form-select mb-3" id="user-select">
+                                <option selected>选择玩家</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="row mt-5">
+                        <div class="col-md-4">
+                            <select class="form-select mb-3" id="equipment-select">
+                                <option selected>选择装备</option>
+                            </select>
+                        </div>
+                        <div class="col-md-4">
+                            <button class="btn btn-primary" id="add-equipment-btn">添加</button>
+                        </div>
+                    </div>
+                    <div class="row mt-5">
+                        <div class="col-md-4">
+                            <div class="input-group">
+                                <span class="input-group-text" id="gold-input-label">金币</span>
+                                <input type="number" class="form-control" id="gold-input"
+                                    aria-describedby="gold-input-label">
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <button class="btn btn-primary" id="update-gold-btn">更新金币</button>
+                        </div>
+                    </div>
+                    <div class="row mt-5">
+                        <div class="col-md-4">
+                            <div class="input-group">
+                                <span class="input-group-text" id="luck-input-label">幸运</span>
+                                <input type="number" class="form-control" id="luck-input" aria-describedby="luck-input-label">
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <button class="btn btn-primary" id="update-luck-btn">更新幸运</button>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>

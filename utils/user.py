@@ -7,8 +7,8 @@ def add_user(user):
     Add a new user to the user database.
     """
     conn, cursor = connect_db('database/user.db')
-    query = "INSERT INTO user (username, password, admin, gold, luck) VALUES (?, ?, ?, ?, ?)"
-    cursor.execute(query, (user["username"], user["password"],
+    query = "INSERT INTO user (user_id, username, password, admin, gold, luck) VALUES (?, ?, ?, ?, ?, ?)"
+    cursor.execute(query, (user['user_id'], user["username"], user["password"],
                    user["admin"], user["gold"], user["luck"]))
     conn.commit()
     conn.close()

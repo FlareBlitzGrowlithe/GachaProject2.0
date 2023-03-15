@@ -29,7 +29,7 @@ function CallGacha(PoolSelection, times) {
             gachaResult.unshift(batch.results);
             UpdateGachaTable();
             $('#main-table').css('visibility', 'visible');
-            UpdateGoldNavbar(batch.gold);
+            UpdateGoldWebPage(batch.gold);
         },
         error: function () {
             console.log("Failed to call /gacha");
@@ -76,11 +76,9 @@ function UpdateGold(userId, amount) {
         url: "/update_gold",
         type: "POST",
         data: { user_id: userId, amount: amount },
-        success: function (response) {
-            if (userId == sessionUserId) {
-                // Success! Update the gold amount on the page
-                UpdateGoldNavbar(response.gold);
-            }
+        success: function (data) {
+            // Success! Update the gold amount on the page
+            UpdateGoldWebPage(data.gold);
         },
         error: function (xhr, status, error) {
             // Something went wrong...
@@ -89,17 +87,20 @@ function UpdateGold(userId, amount) {
     });
 }
 
+function UpdateGoldWebPage(amount) {
+    $('.user-gold').text(amount);
+}
+
 // function to update luck value to backend
 function UpdateLuck(userId, luck) {
     $.ajax({
         url: "/update_luck",
         type: "POST",
-        data: { user_id: userId, luck: luck },
-        success: function (response) {
-            if (userId == sessionUserId) {
-                // Success! Update the luck amount on the page
-                UpdateLuckNavbar(response.luck);
-            }
+        data: {user_id:userId, luck: luck },
+        success: function (data) {
+            // Success! Update the luck amount on the page
+            const userLuckEl = document.getElementById("user-luck");
+            userLuckEl.textContent = data;
         },
         error: function (xhr, status, error) {
             // Something went wrong...
@@ -108,13 +109,6 @@ function UpdateLuck(userId, luck) {
     });
 }
 
-function UpdateGoldNavbar(amount) {
-    $('.user-gold').text(amount);
-}
-
-function UpdateLuckNavbar(luk) {
-    $('.user-luck').text(luk);
-}
 
 function UpdateGachaTable() {
     // update gacha results

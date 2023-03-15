@@ -7,11 +7,8 @@ import datetime
 
 PRICE_CHART_SELLING = {"神": 20, "圣": 10, "皇": 8, "贤": 5, "凡": 3 }
 
-
+# add a new equipment to the user's inventory with current timestamp.
 def add_equipment_to_userid(equipment):
-    """
-    Add a new equipment to the user's inventory with current timestamp.
-    """
     conn, cursor = connect_db('database/inventory.db')
     query = "INSERT INTO inventory (user_id, pool, success_level, roll, equipment_id, timestamp) VALUES (?, ?, ?, ?, ?, ?)"
     timestamp = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
@@ -20,23 +17,16 @@ def add_equipment_to_userid(equipment):
     conn.commit()
     conn.close()
 
-
+# remove an equipment from the user's inventory by ID.
 def remove_equipment(user_id, equipment_id):
-    """
-    Remove an equipment from the user's inventory by ID.
-    """
     conn, cursor = connect_db('database/inventory.db')
     query = "DELETE FROM inventory WHERE ROWID IN(SELECT ROWID FROM inventory WHERE user_id= ? AND equipment_id= ? LIMIT 1)"
     cursor.execute(query, (user_id, equipment_id))
     conn.commit()
     conn.close()
 
-
+# remove an equipment from the user's inventory and add its value to the user's gold.
 def sell_equipment(user, equipment_id):
-    """
-    Remove an equipment from the user's inventory and add its value to the user's gold.
-    """
-
     equipment = get_equipment_by_id(equipment_id)
     user_id = user['user_id']
     user = get_user_by_id(user_id)
@@ -50,11 +40,9 @@ def sell_equipment(user, equipment_id):
                 user_id, user['gold']+PRICE_CHART_SELLING[equipment['rarity']])
             remove_equipment(user_id, equipment_id)
             return True
-
+        
+# retrieve all equipment data from inventory database for the specified user.
 def get_equipment_by_userid(user_id):
-    """
-    Retrieve all equipment data from inventory database for the specified user.
-    """
     conn, cursor = connect_db('database/inventory.db')
     query = "SELECT * FROM inventory WHERE user_id = ?"
     cursor.execute(query, (user_id,))
@@ -70,11 +58,9 @@ def get_equipment_by_userid(user_id):
         "timestamp":result[5]
     } for result in results]
 
+# retrieve all equipment data from inventory database.
 
 def get_inventory_full_list():
-    """
-    Retrieve all equipment data from inventory database.
-    """
     conn, cursor = connect_db('database/inventory.db')
     query = "SELECT * FROM inventory"
     cursor.execute(query)
