@@ -16,8 +16,8 @@
 <main class="container px-4 px-lg-5">
     <form class="row gx-4 gx-md-5 justify-content-center" style="margin-bottom: 5rem">
         <div class="btn-group" role="group" aria-label="Button group with nested dropdown" style="width:500px">
-            <button type="button" class="btn btn-secondary" onclick="Single()">单抽</button>
-            <button type="button" class="btn btn-secondary" onclick="TenTimes()">十连</button>
+            <button type="button" class="btn btn-secondary" id="btn-single">单抽</button>
+            <button type="button" class="btn btn-secondary" id="btn-ten-times">十连</button>
 
             <div class="btn-group" role="group">
                 <select class="form-select my-1 mr-sm-2" id="inlineFormCustomSelectPref">
@@ -30,11 +30,5 @@
     </form>
 </main>
 
-<!--div class="row justify-content-center" id="main-2">
-        <br>
-        <div id="warning-result" class="warning">没有足够的金币！</div>
-        <div id="warning-messege" class="warning">请输入正确的幸运值(1-100)！</div>
-        <div class="col-md-6" id="gacha-result"></div>
-    </div-->
 <div id="main-table" class="table-responsive"></div>
 {% endblock %}

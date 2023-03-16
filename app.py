@@ -44,13 +44,11 @@ def register():
     username = request.form.get('username')
     password = request.form.get('password')
     user_id = request.form.get('ids')
-    print(request.form.to_dict())
     admin = False
     gold = 0
     luck = 50
     user = {"user_id":user_id, "username": username, "password": generate_password_hash(
         password), "admin": admin, "gold": gold, "luck": luck}
-    print(user)
     add_user(user)
     return redirect('/login')
 
@@ -81,8 +79,6 @@ def login():
 @login_required
 def user():
     user = get_user_by_id(session['user_id'])
-    print(session)
-    print(user)
     inventory = get_equipment_by_userid(user["user_id"])
     if inventory==None:
         inventory={}
@@ -193,17 +189,28 @@ def sell():
     sold = sell_equipment(user, equipment_id)
     if sold:
         inventory = get_equipment_by_userid(user["user_id"])
+    else:
+        inventory = {}
     return jsonify(inventory=inventory)
 
 # remove item from user's inventory
-@app.route('/remove', methods=['POST'])
+@app.route('/remove_equipment_from_userid', methods=['POST'])
 @login_required
-def remove():
+def remove_equipment_from_userid():
     targetid = request.form.get('target_id')
     equipment_id = request.form.get('equipment_id')
-    remove_equipment(targetid, equipment_id)
+    remove_equipment_from_inventory(targetid, equipment_id)
     inventory = get_inventory_full_list()
     return jsonify(inventory=inventory)
+
+# remove item from database
+@app.route('/remove_equipment_from_list', methods=['POST'])
+@login_required
+def remove_equipment_from_list():
+    equipment_id = request.form.get('equipment_id')
+    remove_equipment_by_id(equipment_id)
+    return {}
+
 
 # admin control add equipment
 @app.route('/add_equipment_admin', methods=['POST'])
@@ -211,7 +218,7 @@ def remove():
 def add_equipment_admin():
     equipment = request.form.to_dict()
     add_equipment_to_pool(equipment)
-    return jsonify({'success': True}), 200
+    return jsonify({'success': True})
 
 
 # get all users from the database for display

@@ -18,7 +18,7 @@ def add_equipment_to_userid(equipment):
     conn.close()
 
 # remove an equipment from the user's inventory by ID.
-def remove_equipment(user_id, equipment_id):
+def remove_equipment_from_inventory(user_id, equipment_id):
     conn, cursor = connect_db('database/inventory.db')
     query = "DELETE FROM inventory WHERE ROWID IN(SELECT ROWID FROM inventory WHERE user_id= ? AND equipment_id= ? LIMIT 1)"
     cursor.execute(query, (user_id, equipment_id))
@@ -38,7 +38,7 @@ def sell_equipment(user, equipment_id):
         else:
             update_user_gold(
                 user_id, user['gold']+PRICE_CHART_SELLING[equipment['rarity']])
-            remove_equipment(user_id, equipment_id)
+            remove_equipment_from_inventory(user_id, equipment_id)
             return True
         
 # retrieve all equipment data from inventory database for the specified user.
