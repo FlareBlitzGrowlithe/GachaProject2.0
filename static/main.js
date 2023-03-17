@@ -27,7 +27,9 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     if (addEquipmentBtn) {
-        addEquipmentBtn.addEventListener('click', addEquipmentToPlayer);
+        addEquipmentBtn.addEventListener('click', function (event) {
+            addEquipmentToPlayer(event, this);
+        });
     }
 
     if (updateGoldBtn) {
@@ -82,27 +84,41 @@ function addEquipment() {
     });
 }
 
-function addEquipmentToPlayer() {
-    // populate dropdowns
+let requestInProgress = false;
+
+function addEquipmentToPlayer(event, clickedElement) {
     // handle add equipment button click
-    $('#add-equipment-btn').on('click', function (event) {
-        var userId = $('#user-select').val();
-        var equipmentId = $('#equipment-select option:selected').val(); // use .data() to get the equipment id
-        $.ajax({
-            url: '/add_equipment_to_userid',
-            method: 'POST',
-            data: {
-                'user_id': userId,
-                'equipment_id': equipmentId
-            },
-            success: function (data) {
-                // success message or table update here
-                console.log('Equipment added to user successfully');
-            },
-            error: function (xhr, status, error) {
-                console.log(error);
-            }
-        });    });
+    event.preventDefault();
+
+    // Check if a request is already in progress
+    if (requestInProgress) {
+        return;
+    }
+    requestInProgress = true;
+
+    var userId = $('#user-select').val();
+    var equipmentId = $('#equipment-select option:selected').val(); // use .data() to get the equipment id
+    $(clickedElement).prop('disabled', true);
+    $.ajax({
+        url: '/add_equipment_to_userid',
+        method: 'POST',
+        data: {
+            'user_id': userId,
+            'equipment_id': equipmentId
+        },
+        success: function (data) {
+            // success message or table update here
+            console.log('Equipment added to user successfully');
+        },
+        error: function (xhr, status, error) {
+            console.log(error);
+        },
+        complete: function () {
+            // Re-enable the button and set requestInProgress to false after the request is completed
+            $(clickedElement).prop('disabled', false);
+            requestInProgress = false;
+        }
+    });
 }
 
 function checkGold(poolSelection, times) {
@@ -282,6 +298,10 @@ $(document).ready(function () {
         // prevent the default action of the button, which is to submit the form
         event.preventDefault();
         const itemId = $(clickedElement).data('item-id');
+
+        // Disable the button
+        $(clickedElement).prop('disabled', true);
+
         $.ajax({
             url: '/sell',
             type: 'POST',
@@ -292,9 +312,14 @@ $(document).ready(function () {
             },
             error: function (xhr, status, error) {
                 console.log(error);
+            },
+            complete: function () {
+                // Re-enable the button after the request is completed
+                $(clickedElement).prop('disabled', false);
             }
         });
     }
+
 
     function inventoryRemoveRowClickHandler(event, clickedElement, inventoryTable) {
         // prevent the default action of the button, which is to submit the form
@@ -341,6 +366,10 @@ $(document).ready(function () {
         event.preventDefault();
         var item_id = $(clickedElement).data('item-id');
         var target_id = $(clickedElement).data('target-id');
+
+        // Disable the button
+        $(clickedElement).prop('disabled', true);
+
         $.ajax({
             url: '/remove_equipment_from_userid',
             type: 'POST',
@@ -351,9 +380,14 @@ $(document).ready(function () {
             },
             error: function (xhr, status, error) {
                 console.log(error);
+            },
+            complete: function () {
+                // Re-enable the button after the request is completed
+                $(clickedElement).prop('disabled', false);
             }
         });
     };
+
 
     const inventoryTableAll = initializeTable('#inventory-all', '/getinventoryall', inventoryAllColumns, null);
     $('#inventory-all tbody').on('click', '.sell-btn', function (event) {
@@ -361,6 +395,32 @@ $(document).ready(function () {
     });
 });
 
+// user table in admin page
+function initializeUserTable(selector, ajaxUrl, columns) {
+    const table = $(selector).DataTable({
+        ajax: {
+            url: ajaxUrl,
+            dataSrc: 'users',
+        },
+        columns: columns,
+    });
+
+    return table;
+}
+
+$(document).ready(function () {
+    const userColumns = [
+        { data: 'user_id' },
+        { data: 'username' },
+        { data: 'admin', render: function (data) { return data ? 'Yes' : 'No'; } },
+        { data: 'gold' },
+        { data: 'luck' },
+    ];
+
+    const userTable = initializeUserTable('#user-table', '/get_users_all', userColumns);
+});
+
+// full equipment table in admin page
 $(document).ready(function () {
     // get equipment items and populate them in the table
     var equipmentTable = $('#items-all').DataTable({

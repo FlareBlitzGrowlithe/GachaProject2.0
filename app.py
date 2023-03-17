@@ -32,12 +32,10 @@ def login_required(f):
 @login_required
 def index():
     return render_template('login.html')
-
 '''
 @app.route('/register', methods=['GET'])
 def show_register():
     return render_template('register.html')
-'''
 
 @app.route('/register', methods=['POST'])
 def register():
@@ -51,7 +49,7 @@ def register():
         password), "admin": admin, "gold": gold, "luck": luck}
     add_user(user)
     return redirect('/login')
-
+'''
 
 # page /login
 @app.route('/login', methods=['GET', 'POST'])
@@ -218,7 +216,7 @@ def remove_equipment_from_list():
 def add_equipment_admin():
     equipment = request.form.to_dict()
     add_equipment_to_pool(equipment)
-    return jsonify({'success': True})
+    return jsonify({'success': True}),200
 
 
 # get all users from the database for display
@@ -240,12 +238,17 @@ def add_item_to_user():
                               "success_level": "",
                               "roll": "",
                               "equipment_id": equipment_id}))
+    print(userid, equipment_id)
     return {}
 
 
 def set_username_cookie(response, username):
-    response.set_cookie('username', username)
+    # Set the cookie to expire at the same time as the session
+    expires = datetime.datetime.now()
+    expires = expires + app.permanent_session_lifetime
+    response.set_cookie('username', username, expires=expires)
     return response
+
 
 def get_username_cookie(request):
     return request.cookies.get('username')
